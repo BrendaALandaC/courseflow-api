@@ -19,4 +19,4 @@
 - Añadir comentario de nueva actualizacion, ejemplo:
     - git commit -m "feat: configure database, docker and project structure"
 - Subir los cambios:
-- git push -u origin feature/project-setup
+  - git push -u origin feature/project-setup
