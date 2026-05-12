@@ -2,6 +2,8 @@ package com.brenda.courseflow.user.service;
 
 import com.brenda.courseflow.role.entity.Role;
 import com.brenda.courseflow.role.repository.RoleRepository;
+import com.brenda.courseflow.shared.exception.BadRequestException;
+import com.brenda.courseflow.shared.exception.ResourceNotFoundException;
 import com.brenda.courseflow.user.dto.UserCreateRequest;
 import com.brenda.courseflow.user.dto.UserResponse;
 import com.brenda.courseflow.user.entity.User;
@@ -32,7 +34,7 @@ public class UserService {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+                        new ResourceNotFoundException("User not found"));
 
         return mapToResponse(user);
     }
@@ -40,16 +42,16 @@ public class UserService {
     public UserResponse create(UserCreateRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new BadRequestException("Username already exists");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new BadRequestException("Email already exists");
         }
 
         Role role = roleRepository.findByName(request.getRole())
                 .orElseThrow(() ->
-                        new RuntimeException("Role not found"));
+                        new ResourceNotFoundException("Role not found"));
 
         User user = new User();
 
