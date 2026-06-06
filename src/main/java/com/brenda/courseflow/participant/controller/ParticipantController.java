@@ -1,0 +1,45 @@
+package com.brenda.courseflow.participant.controller;
+
+import com.brenda.courseflow.participant.dto.ParticipantCreateRequest;
+import com.brenda.courseflow.participant.dto.ParticipantResponse;
+import com.brenda.courseflow.participant.service.ParticipantService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@SecurityRequirement(name="bearerAuth")
+@Tag(name = "Participants", description = "Controller for participants management, creating, querying, etc.")
+@RestController
+@RequestMapping("/api/participants")
+@RequiredArgsConstructor
+public class ParticipantController {
+
+    private final ParticipantService participantService;
+
+    @Operation(summary = "Find all participants", description = "Find all participants",
+            responses={ @ApiResponse(responseCode="200", description="OK")})
+    @GetMapping
+    public List<ParticipantResponse> findAll() {
+        return participantService.findAll();
+    }
+
+    @Operation(summary = "Find by ID", description = "Find participant by ID",
+              responses={ @ApiResponse(responseCode="200", description="OK")})
+    @GetMapping("/{id}")
+    public ParticipantResponse findById(@PathVariable Long id) {
+        return participantService.findById(id);
+    }
+
+    @Operation(summary = "Create participant", description = "Create a new participant",
+            responses={ @ApiResponse(responseCode="201", description="Created")})
+    @PostMapping
+    public ParticipantResponse create(@RequestBody @Valid ParticipantCreateRequest request) {
+        return participantService.create(request);
+    }
+}
