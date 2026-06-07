@@ -51,6 +51,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/participants/**")
                         .hasAnyRole("ADMIN", "TRAINER", "ASSISTANT")
 
+                        //-----ENROLLMENTS------
+                        .requestMatchers("/api/enrollments/**")
+                        .hasAnyRole(
+                                "ADMIN",
+                                "TRAINER"
+                        )
+
                         //----ANY REQUEST-----
                         .anyRequest().authenticated()
                 )

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @SecurityRequirement(name="bearerAuth")
 @Tag(name = "Courses", description = "Controller for courses management, creating, querying, etc.")
 @RestController
@@ -28,7 +29,7 @@ public class CourseController {
         return courseService.findAll();
     }
 
-    @Operation(summary = "Find by ID", description = "Find courses by ID",
+    @Operation(summary = "Find by ID", description = "Find course by ID",
             responses={ @ApiResponse(responseCode="200", description="OK")})
     @GetMapping("/{id}")
     public CourseResponse findById(@PathVariable Long id) {
