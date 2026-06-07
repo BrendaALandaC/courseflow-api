@@ -2,6 +2,7 @@ package com.brenda.courseflow.course.service;
 
 import com.brenda.courseflow.course.dto.CourseCreateRequest;
 import com.brenda.courseflow.course.dto.CourseResponse;
+import com.brenda.courseflow.course.dto.CourseUpdateRequest;
 import com.brenda.courseflow.course.entity.Course;
 import com.brenda.courseflow.course.repository.CourseRepository;
 import com.brenda.courseflow.shared.exception.BadRequestException;
@@ -9,6 +10,7 @@ import com.brenda.courseflow.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,7 +32,7 @@ public class CourseService {
     }
 
     public CourseResponse create(CourseCreateRequest request) {
-        validateDates(request);
+        validateDates(request.getStartDate(), request.getEndDate());
 
         Course course = new Course();
         course.setTitle(request.getTitle());
@@ -56,10 +58,32 @@ public class CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
     }
 
-    private void validateDates(CourseCreateRequest request) {
-        if (request.getEndDate().isBefore(request.getStartDate())) {
+    private void validateDates(LocalDate startDate, LocalDate endDate) {
+        if (endDate.isBefore(startDate)) {
             throw new BadRequestException("End date cannot be before start date");
         }
+    }
+
+    public CourseResponse update(Long id, CourseUpdateRequest request) {
+        validateDates(request.getStartDate(), request.getEndDate());
+
+        Course course = getCourseById(id);
+
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setModality(request.getModality());
+        course.setLocation(request.getLocation());
+        course.setStartDate(request.getStartDate());
+        course.setEndDate(request.getEndDate());
+        course.setMaxParticipants(request.getMaxParticipants());
+        course.setInstructorName(request.getInstructorName());
+
+        return mapToResponse(courseRepository.save(course));
+    }
+
+    public void delete(Long id) {
+        Course course = getCourseById(id);
+        courseRepository.delete(course);
     }
 
     private CourseResponse mapToResponse(Course course) {

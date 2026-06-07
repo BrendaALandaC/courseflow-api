@@ -2,6 +2,7 @@ package com.brenda.courseflow.course.controller;
 
 import com.brenda.courseflow.course.dto.CourseCreateRequest;
 import com.brenda.courseflow.course.dto.CourseResponse;
+import com.brenda.courseflow.course.dto.CourseUpdateRequest;
 import com.brenda.courseflow.course.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,13 +44,27 @@ public class CourseController {
         return courseService.create(request);
     }
 
-    @Operation(summary = "Find active by ID", description = "Find courses by ID and status = Active",
-            responses={ @ApiResponse(responseCode="200", description="OK")})
+    @Operation(summary = "Change status", description = "Change status of courses by ID and status active = true/false")
     @PatchMapping("/{id}/status")
     public CourseResponse changeStatus(
             @PathVariable Long id,
             @RequestParam Boolean active
     ) {
         return courseService.changeStatus(id, active);
+    }
+
+    @Operation(summary = "Update course", description = "Update course")
+    @PutMapping("/{id}")
+    public CourseResponse update(
+            @PathVariable Long id,
+            @RequestBody @Valid CourseUpdateRequest request
+    ) {
+        return courseService.update(id, request);
+    }
+
+    @Operation(summary = "Delete course", description = "Delete course")
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        courseService.delete(id);
     }
 }

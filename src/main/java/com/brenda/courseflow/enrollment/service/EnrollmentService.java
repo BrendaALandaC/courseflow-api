@@ -2,7 +2,9 @@ package com.brenda.courseflow.enrollment.service;
 
 import com.brenda.courseflow.course.entity.Course;
 import com.brenda.courseflow.course.repository.CourseRepository;
+import com.brenda.courseflow.enrollment.dto.EnrollmentAttendanceRequest;
 import com.brenda.courseflow.enrollment.dto.EnrollmentCreateRequest;
+import com.brenda.courseflow.enrollment.dto.EnrollmentGradeRequest;
 import com.brenda.courseflow.enrollment.dto.EnrollmentResponse;
 import com.brenda.courseflow.enrollment.entity.Enrollment;
 import com.brenda.courseflow.enrollment.repository.EnrollmentRepository;
@@ -68,6 +70,58 @@ public class EnrollmentService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    private Enrollment getEnrollmentById(Long id) {
+
+        return enrollmentRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Enrollment not found"
+                        ));
+    }
+
+    public EnrollmentResponse findById(Long id) {
+
+        return mapToResponse(
+                getEnrollmentById(id)
+        );
+    }
+
+    public EnrollmentResponse updateAttendance(
+            Long id,
+            EnrollmentAttendanceRequest request
+    ) {
+
+        Enrollment enrollment = getEnrollmentById(id);
+
+        enrollment.setAttendanceConfirmed(
+                request.getAttendanceConfirmed()
+        );
+
+        enrollmentRepository.save(enrollment);
+
+        return mapToResponse(enrollment);
+    }
+
+    public EnrollmentResponse updateGrade(
+            Long id,
+            EnrollmentGradeRequest request
+    ) {
+
+        Enrollment enrollment = getEnrollmentById(id);
+
+        enrollment.setGrade(
+                request.getGrade()
+        );
+
+        enrollment.setApproved(
+                request.getGrade() >= 7
+        );
+
+        enrollmentRepository.save(enrollment);
+
+        return mapToResponse(enrollment);
     }
 
     private EnrollmentResponse mapToResponse(Enrollment enrollment) {

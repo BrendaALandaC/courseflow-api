@@ -1,6 +1,8 @@
 package com.brenda.courseflow.enrollment.controller;
 
+import com.brenda.courseflow.enrollment.dto.EnrollmentAttendanceRequest;
 import com.brenda.courseflow.enrollment.dto.EnrollmentCreateRequest;
+import com.brenda.courseflow.enrollment.dto.EnrollmentGradeRequest;
 import com.brenda.courseflow.enrollment.dto.EnrollmentResponse;
 import com.brenda.courseflow.enrollment.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,4 +50,44 @@ public class EnrollmentController {
     ) {
         return enrollmentService.findByParticipantId(participantId);
     }
+
+
+    @Operation(summary = "Find by enrollment ID", description = "Find by enrollment ID",
+            responses={ @ApiResponse(responseCode="200", description="OK")})
+    @GetMapping("/{id}")
+    public EnrollmentResponse findById(
+            @PathVariable Long id
+    ) {
+
+        return enrollmentService.findById(id);
+    }
+
+    @Operation(summary = "Attendance", description = "Update attendance")
+    @PatchMapping("/{id}/attendance")
+    public EnrollmentResponse updateAttendance(
+            @PathVariable Long id,
+            @RequestBody @Valid
+            EnrollmentAttendanceRequest request
+    ) {
+
+        return enrollmentService.updateAttendance(
+                id,
+                request
+        );
+    }
+
+    @Operation(summary = "Grade", description = "Update grade")
+    @PatchMapping("/{id}/grade")
+    public EnrollmentResponse updateGrade(
+            @PathVariable Long id,
+            @RequestBody @Valid
+            EnrollmentGradeRequest request
+    ) {
+
+        return enrollmentService.updateGrade(
+                id,
+                request
+        );
+    }
+
 }
