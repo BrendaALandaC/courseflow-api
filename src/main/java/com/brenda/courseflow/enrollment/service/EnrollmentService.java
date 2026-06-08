@@ -124,6 +124,13 @@ public class EnrollmentService {
         return mapToResponse(enrollment);
     }
 
+    public void delete(Long id) {
+
+        Enrollment enrollment = getEnrollmentById(id);
+
+        enrollmentRepository.delete(enrollment);
+    }
+
     private EnrollmentResponse mapToResponse(Enrollment enrollment) {
         return EnrollmentResponse.builder()
                 .id(enrollment.getId())

@@ -6,7 +6,9 @@ import com.brenda.courseflow.enrollment.dto.EnrollmentGradeRequest;
 import com.brenda.courseflow.enrollment.dto.EnrollmentResponse;
 import com.brenda.courseflow.enrollment.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -88,6 +90,23 @@ public class EnrollmentController {
                 id,
                 request
         );
+    }
+
+
+    @Operation(
+            summary = "Delete enrollment",
+            description = "Delete enrollment"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Not found", content = @Content)
+    })
+    @DeleteMapping("/{id}")
+    public void delete(
+            @PathVariable Long id
+    ) {
+
+        enrollmentService.delete(id);
     }
 
 }
