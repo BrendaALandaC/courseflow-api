@@ -2,6 +2,7 @@ package com.brenda.courseflow.participant.service;
 
 import com.brenda.courseflow.participant.dto.ParticipantCreateRequest;
 import com.brenda.courseflow.participant.dto.ParticipantResponse;
+import com.brenda.courseflow.participant.dto.ParticipantUpdateRequest;
 import com.brenda.courseflow.participant.entity.Participant;
 import com.brenda.courseflow.participant.repository.ParticipantRepository;
 import com.brenda.courseflow.shared.exception.BadRequestException;
@@ -47,6 +48,27 @@ public class ParticipantService {
     public Participant getParticipantById(Long id) {
         return participantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Participant not found"));
+    }
+
+    public ParticipantResponse update(Long id, ParticipantUpdateRequest request) {
+        Participant participant = getParticipantById(id);
+
+        if (participantRepository.existsByEmailAndIdNot(request.getEmail(), id)) {
+            throw new BadRequestException("Participant email already exists");
+        }
+
+        participant.setFirstName(request.getFirstName());
+        participant.setLastName(request.getLastName());
+        participant.setEmail(request.getEmail());
+        participant.setPhone(request.getPhone());
+        participant.setInstitution(request.getInstitution());
+
+        return mapToResponse(participantRepository.save(participant));
+    }
+
+    public void delete(Long id) {
+        Participant participant = getParticipantById(id);
+        participantRepository.delete(participant);
     }
 
     private ParticipantResponse mapToResponse(Participant participant) {

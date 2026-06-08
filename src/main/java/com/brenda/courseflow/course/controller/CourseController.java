@@ -5,7 +5,9 @@ import com.brenda.courseflow.course.dto.CourseResponse;
 import com.brenda.courseflow.course.dto.CourseUpdateRequest;
 import com.brenda.courseflow.course.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -53,7 +55,8 @@ public class CourseController {
         return courseService.changeStatus(id, active);
     }
 
-    @Operation(summary = "Update course", description = "Update course")
+    @Operation(summary = "Update course", description = "Update course",
+            responses={ @ApiResponse(responseCode="200", description="OK")})
     @PutMapping("/{id}")
     public CourseResponse update(
             @PathVariable Long id,
@@ -62,7 +65,14 @@ public class CourseController {
         return courseService.update(id, request);
     }
 
-    @Operation(summary = "Delete course", description = "Delete course")
+     @Operation(
+            summary = "Delete course",
+            description = "Delete course"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Not found", content = @Content)
+    })
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         courseService.delete(id);

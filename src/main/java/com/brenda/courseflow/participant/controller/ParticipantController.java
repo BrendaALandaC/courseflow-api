@@ -2,9 +2,12 @@ package com.brenda.courseflow.participant.controller;
 
 import com.brenda.courseflow.participant.dto.ParticipantCreateRequest;
 import com.brenda.courseflow.participant.dto.ParticipantResponse;
+import com.brenda.courseflow.participant.dto.ParticipantUpdateRequest;
 import com.brenda.courseflow.participant.service.ParticipantService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -41,5 +44,29 @@ public class ParticipantController {
     @PostMapping
     public ParticipantResponse create(@RequestBody @Valid ParticipantCreateRequest request) {
         return participantService.create(request);
+    }
+
+    @Operation(summary = "Update participant", description = "Update participant",
+            responses={ @ApiResponse(responseCode="200", description="OK")})
+    @PutMapping("/{id}")
+    public ParticipantResponse update(
+            @PathVariable Long id,
+            @RequestBody @Valid ParticipantUpdateRequest request
+    ) {
+        return participantService.update(id, request);
+    }
+
+
+    @Operation(
+            summary = "Delete participant",
+            description = "Delete participant"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Not found", content = @Content)
+    })
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        participantService.delete(id);
     }
 }
