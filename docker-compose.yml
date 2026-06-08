@@ -14,6 +14,27 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: courseflow-app
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mariadb://db:3306/courseflow_db
+      DB_USERNAME: courseflow_user
+      DB_PASSWORD: courseflow_pass
+      JWT_SECRET: local-dev-secret-key-change-in-production
+      JWT_EXPIRATION_MS: 86400000
 
 volumes:
   db_data:
