@@ -2,6 +2,7 @@ package com.brenda.courseflow.course.entity;
 
 
 import com.brenda.courseflow.audit.entity.AuditableEntity;
+import com.brenda.courseflow.course.enums.Modality;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +25,9 @@ public class Course extends AuditableEntity {
     @Column(length = 1000)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String modality;
+    private Modality modality;
 
     private String location;
 

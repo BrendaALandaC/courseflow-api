@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,8 +44,9 @@ public class CourseController {
     @Operation(summary = "Create course", description = "Create a new course",
             responses={ @ApiResponse(responseCode="201", description="Created")})
     @PostMapping
-    public CourseResponse create(@RequestBody @Valid CourseCreateRequest request) {
-        return courseService.create(request);
+    public ResponseEntity<CourseResponse> create(@RequestBody @Valid CourseCreateRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(courseService.create(request));
     }
 
     @Operation(summary = "Change status", description = "Change status of courses by ID and status active = true/false")
@@ -73,8 +76,9 @@ public class CourseController {
             @ApiResponse(responseCode = "204", description = "OK"),
             @ApiResponse(responseCode = "400", description = "Not found", content = @Content)
     })
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        courseService.delete(id);
-    }
+     @DeleteMapping("/{id}")
+     public ResponseEntity<Void> delete(@PathVariable Long id) {
+         courseService.delete(id);
+         return ResponseEntity.noContent().build();
+     }
 }

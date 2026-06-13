@@ -1,5 +1,6 @@
 package com.brenda.courseflow.course.dto;
 
+import com.brenda.courseflow.course.enums.Modality;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,8 +18,7 @@ public class CourseUpdateRequest {
 
     private String description;
 
-    @NotBlank
-    private String modality;
+    private Modality modality;
 
     private String location;
 

@@ -1,5 +1,6 @@
 package com.brenda.courseflow.course.dto;
 
+import com.brenda.courseflow.course.enums.Modality;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,7 +13,7 @@ public class CourseResponse {
     private Long id;
     private String title;
     private String description;
-    private String modality;
+    private Modality modality;
     private String location;
     private LocalDate startDate;
     private LocalDate endDate;
