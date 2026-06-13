@@ -126,7 +126,7 @@ Authorization: Bearer <token>
 ---
 # Author
 
-**Brenda Landa**  
+**Brenda Astrid Landa Contreras**  
 Systems Engineer · M.Sc. in Applied Computing  
 Backend Developer — Java · Spring Boot
 
