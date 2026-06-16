@@ -58,6 +58,10 @@ public class SecurityConfig {
                                 "TRAINER"
                         )
 
+                        //-----CERTIFICATES------
+                        .requestMatchers("/api/certificates/**")
+                        .hasAnyRole("ADMIN", "TRAINER")
+
                         //----ANY REQUEST-----
                         .anyRequest().authenticated()
                 )

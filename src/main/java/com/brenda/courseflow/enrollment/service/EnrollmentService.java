@@ -74,7 +74,7 @@ public class EnrollmentService {
 
     private Enrollment getEnrollmentById(Long id) {
 
-        return enrollmentRepository.findById(id)
+        return enrollmentRepository.findWithDetailsById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Enrollment not found"
