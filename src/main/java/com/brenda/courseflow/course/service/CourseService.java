@@ -11,6 +11,10 @@ import com.brenda.courseflow.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import com.brenda.courseflow.shared.response.PageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,12 +25,26 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
 
-    public List<CourseResponse> findAll() {
-        return courseRepository.findAll()
-                .stream()
-                .map(courseMapper::toResponse)
-                .toList();
+
+    public PageResponse<CourseResponse> findAllPageable(Boolean active, Pageable pageable) {
+
+        Page<Course> coursePage = active == null
+                ? courseRepository.findAll(pageable)
+                : courseRepository.findByActive(active, pageable);
+
+        Page<CourseResponse> responsePage =
+                coursePage.map(courseMapper::toResponse);
+
+        return PageResponse.<CourseResponse>builder()
+                .content(responsePage.getContent())
+                .page(responsePage.getNumber())
+                .size(responsePage.getSize())
+                .totalElements(responsePage.getTotalElements())
+                .totalPages(responsePage.getTotalPages())
+                .last(responsePage.isLast())
+                .build();
     }
+
 
     public CourseResponse findById(Long id) {
         Course course = getCourseById(id);

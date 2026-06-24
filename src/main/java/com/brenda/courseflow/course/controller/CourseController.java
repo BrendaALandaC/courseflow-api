@@ -4,6 +4,10 @@ import com.brenda.courseflow.course.dto.CourseCreateRequest;
 import com.brenda.courseflow.course.dto.CourseResponse;
 import com.brenda.courseflow.course.dto.CourseUpdateRequest;
 import com.brenda.courseflow.course.service.CourseService;
+import com.brenda.courseflow.shared.response.PageResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,15 +31,21 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @Operation(summary = "Find all courses", description = "Find all courses",
-            responses={ @ApiResponse(responseCode="200", description="OK")})
-    @GetMapping
-    public List<CourseResponse> findAll() {
-        return courseService.findAll();
-    }
 
-    @Operation(summary = "Find by ID", description = "Find course by ID",
-            responses={ @ApiResponse(responseCode="200", description="OK")})
+
+    @Operation(summary = "Find all courses with pagination", description = "Find all courses: pagination and active filters")
+    @GetMapping
+    public PageResponse<CourseResponse> findAllPageable(
+            @RequestParam(required = false) Boolean active,
+            @PageableDefault(
+                    size = 10,
+                    sort = "startDate",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return courseService.findAllPageable(active, pageable);
+    }
+    @Operation(summary = "Find by ID", description = "Find course by ID")
     @GetMapping("/{id}")
     public CourseResponse findById(@PathVariable Long id) {
         return courseService.findById(id);
