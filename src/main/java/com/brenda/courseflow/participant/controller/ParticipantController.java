@@ -4,6 +4,10 @@ import com.brenda.courseflow.participant.dto.ParticipantCreateRequest;
 import com.brenda.courseflow.participant.dto.ParticipantResponse;
 import com.brenda.courseflow.participant.dto.ParticipantUpdateRequest;
 import com.brenda.courseflow.participant.service.ParticipantService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import com.brenda.courseflow.shared.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,11 +29,25 @@ public class ParticipantController {
 
     private final ParticipantService participantService;
 
-    @Operation(summary = "Find all participants", description = "Find all participants",
-            responses={ @ApiResponse(responseCode="200", description="OK")})
+    @Operation(summary = "Find all participants with filters and pagination", description = "Find all participants: filtering by name amd pagination")
     @GetMapping
-    public List<ParticipantResponse> findAll() {
-        return participantService.findAll();
+    public PageResponse<ParticipantResponse> findAll(
+
+            @RequestParam(required = false)
+            String name,
+
+            @PageableDefault(
+                    size = 10,
+                    sort = "lastName",
+                    direction = Sort.Direction.ASC
+            )
+            Pageable pageable
+    ) {
+
+        return participantService.findAll(
+                name,
+                pageable
+        );
     }
 
     @Operation(summary = "Find by ID", description = "Find participant by ID",

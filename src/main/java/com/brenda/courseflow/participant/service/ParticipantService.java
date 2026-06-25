@@ -5,8 +5,12 @@ import com.brenda.courseflow.participant.dto.ParticipantResponse;
 import com.brenda.courseflow.participant.dto.ParticipantUpdateRequest;
 import com.brenda.courseflow.participant.entity.Participant;
 import com.brenda.courseflow.participant.repository.ParticipantRepository;
+import com.brenda.courseflow.participant.mapper.ParticipantMapper;
 import com.brenda.courseflow.shared.exception.BadRequestException;
 import com.brenda.courseflow.shared.exception.ResourceNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.brenda.courseflow.shared.response.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,32 +21,56 @@ import java.util.List;
 public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
+    private final ParticipantMapper participantMapper;
 
-    public List<ParticipantResponse> findAll() {
-        return participantRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+    public PageResponse<ParticipantResponse> findAll(
+            String name,
+            Pageable pageable
+    ) {
+
+        Page<Participant> participantPage;
+
+        if (name == null || name.isBlank()) {
+
+            participantPage =
+                    participantRepository.findAll(pageable);
+
+        } else {
+
+            participantPage =
+                    participantRepository
+                            .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                                    name,
+                                    name,
+                                    pageable
+                            );
+        }
+
+        Page<ParticipantResponse> responsePage =
+                participantPage.map(participantMapper::toResponse);
+
+        return PageResponse.<ParticipantResponse>builder()
+                .content(responsePage.getContent())
+                .page(responsePage.getNumber())
+                .size(responsePage.getSize())
+                .totalElements(responsePage.getTotalElements())
+                .totalPages(responsePage.getTotalPages())
+                .last(responsePage.isLast())
+                .build();
     }
 
     public ParticipantResponse findById(Long id) {
         Participant participant = getParticipantById(id);
-        return mapToResponse(participant);
+        return participantMapper.toResponse(participant);
     }
 
     public ParticipantResponse create(ParticipantCreateRequest request) {
         if (participantRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Participant email already exists");
         }
+        Participant participant = participantMapper.toEntity(request);
 
-        Participant participant = new Participant();
-        participant.setFirstName(request.getFirstName());
-        participant.setLastName(request.getLastName());
-        participant.setEmail(request.getEmail());
-        participant.setPhone(request.getPhone());
-        participant.setInstitution(request.getInstitution());
-
-        return mapToResponse(participantRepository.save(participant));
+        return participantMapper.toResponse(participantRepository.save(participant));
     }
 
     public Participant getParticipantById(Long id) {
@@ -63,7 +91,7 @@ public class ParticipantService {
         participant.setPhone(request.getPhone());
         participant.setInstitution(request.getInstitution());
 
-        return mapToResponse(participantRepository.save(participant));
+        return participantMapper.toResponse(participantRepository.save(participant));
     }
 
     public void delete(Long id) {
@@ -71,14 +99,4 @@ public class ParticipantService {
         participantRepository.delete(participant);
     }
 
-    private ParticipantResponse mapToResponse(Participant participant) {
-        return ParticipantResponse.builder()
-                .id(participant.getId())
-                .firstName(participant.getFirstName())
-                .lastName(participant.getLastName())
-                .email(participant.getEmail())
-                .phone(participant.getPhone())
-                .institution(participant.getInstitution())
-                .build();
-    }
 }
